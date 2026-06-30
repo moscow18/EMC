@@ -53,7 +53,7 @@ export default function OwnerLoginPage() {
     if (cleanEmail === 'emc.egypt12@gmail.com' && cleanPassword === savedOwnerPass) {
       localStorage.removeItem('emc_owner_failed_attempts');
       localStorage.removeItem('emc_owner_lockout_until');
-      sessionStorage.setItem('emc_owner_session', 'true');
+       localStorage.setItem('emc_owner_session', 'true');
       router.push('/owner');
       return;
     }
@@ -81,7 +81,7 @@ export default function OwnerLoginPage() {
       } else {
         localStorage.removeItem('emc_owner_failed_attempts');
         localStorage.removeItem('emc_owner_lockout_until');
-        sessionStorage.setItem('emc_owner_session', 'true');
+        localStorage.setItem('emc_owner_session', 'true');
         router.push('/owner');
       }
     } catch (err: any) {

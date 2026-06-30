@@ -43,7 +43,7 @@ export default function AdminProfilePage() {
       if (storedLang) setLang(storedLang);
 
       // 1. Check local session first
-      const localSessionStr = sessionStorage.getItem('emc_admin_session');
+      const localSessionStr = localStorage.getItem('emc_admin_session');
       if (localSessionStr) {
         const localSession = JSON.parse(localSessionStr);
         if (localSession.role === 'receptionist') {
@@ -182,7 +182,7 @@ export default function AdminProfilePage() {
         localStorage.setItem('emc_receptionists', JSON.stringify(updated));
         
         // Update session storage
-        sessionStorage.setItem(
+        localStorage.setItem(
           'emc_admin_session',
           JSON.stringify({ email, name, role: 'receptionist' })
         );

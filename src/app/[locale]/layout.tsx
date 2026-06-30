@@ -113,7 +113,7 @@ export default async function RootLayout({
   const direction = locale === 'ar' ? 'rtl' : 'ltr';
 
   return (
-    <html lang={locale} dir={direction} className={cairo.variable}>
+    <html lang={locale} dir={direction} className={cairo.variable} suppressHydrationWarning>
       <body className={`${cairo.className} antialiased bg-[#F8F9FA] min-h-screen flex flex-col`}>
         <script
           dangerouslySetInnerHTML={{

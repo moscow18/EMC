@@ -72,7 +72,7 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
     }
 
     // 1. Check local session fallback
-    const localSession = sessionStorage.getItem('emc_owner_session');
+    const localSession = localStorage.getItem('emc_owner_session');
     if (localSession) {
       setAuthenticated(true);
       setLoading(false);
@@ -91,7 +91,7 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
     checkAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session && !sessionStorage.getItem('emc_owner_session') && pathname !== '/owner/login') {
+      if (!session && !localStorage.getItem('emc_owner_session') && pathname !== '/owner/login') {
         router.push('/owner/login');
         setAuthenticated(false);
       } else if (session) {
@@ -103,13 +103,13 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
   }, [router, pathname]);
 
   const handleLogout = async () => {
-    sessionStorage.removeItem('emc_owner_session');
+    localStorage.removeItem('emc_owner_session');
     await supabase.auth.signOut();
     router.push('/owner/login');
   };
 
   const wrapRoot = (content: React.ReactNode) => (
-    <html lang="ar" dir="rtl">
+    <html lang="ar" dir="rtl" suppressHydrationWarning>
       <body className="antialiased bg-[#F8F9FA] text-[#1A1A2E] min-h-screen">
         <ToastProvider>
           {content}

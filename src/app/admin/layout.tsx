@@ -93,7 +93,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
 
     // 1. Check local session
-    const localSession = sessionStorage.getItem('emc_admin_session');
+    const localSession = localStorage.getItem('emc_admin_session');
     if (localSession) {
       setAuthenticated(true);
       return;
@@ -144,13 +144,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, [lang]);
 
   const handleLogout = async () => {
-    sessionStorage.removeItem('emc_admin_session');
+    localStorage.removeItem('emc_admin_session');
     await supabase.auth.signOut();
     router.push('/admin/login');
   };
 
   const wrapRoot = (content: React.ReactNode) => (
-    <html lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+    <html lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'} suppressHydrationWarning>
       <body className="antialiased bg-gray-50 min-h-screen text-start">
         <ToastProvider>
           {content}

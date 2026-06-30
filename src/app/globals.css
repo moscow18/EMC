@@ -289,3 +289,15 @@ body {
   transform: translateY(-3px);
   box-shadow: 0 16px 36px -4px rgba(15, 23, 42, 0.12);
 }
+
+/* Hide Next.js Dev/Error portal overlays and watermark indicators */
+nextjs-portal,
+#nextjs-portal,
+[data-nextjs-dialog-overlay],
+[data-nextjs-toast-wrapper],
+#nextjs-toast-wrapper {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}

@@ -53,7 +53,7 @@ export default function AdminLoginPage() {
     if (cleanEmail === 'emc.egypt12@gmail.com' && cleanPassword === savedOwnerPass) {
       localStorage.removeItem('emc_admin_failed_attempts');
       localStorage.removeItem('emc_admin_lockout_until');
-      sessionStorage.setItem('emc_admin_session', JSON.stringify({ email: cleanEmail, name: 'Clinic Owner', role: 'owner' }));
+      localStorage.setItem('emc_admin_session', JSON.stringify({ email: cleanEmail, name: 'Clinic Owner', role: 'owner' }));
       router.push('/admin');
       return;
     }
@@ -68,7 +68,7 @@ export default function AdminLoginPage() {
         localStorage.removeItem('emc_admin_failed_attempts');
         localStorage.removeItem('emc_admin_lockout_until');
         
-        sessionStorage.setItem('emc_admin_session', JSON.stringify({ email: matched.email, name: matched.name, role: 'receptionist' }));
+        localStorage.setItem('emc_admin_session', JSON.stringify({ email: matched.email, name: matched.name, role: 'receptionist' }));
         router.push('/admin');
         return;
       }
