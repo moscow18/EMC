@@ -59,7 +59,7 @@ function ToastItem({ toast, onClose }: { toast: Toast; onClose: (id: string) => 
       onClose(toast.id);
     }, 4000);
     return () => clearTimeout(timer);
-  }, [toast, onClose]);
+  }, [toast.id, onClose]);
 
   const config = {
     success: {
