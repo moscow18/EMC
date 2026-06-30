@@ -1,0 +1,21 @@
+{
+  "name": "Egypt Medical Clinic",
+  "short_name": "EMC",
+  "description": "Book the best doctors and clinics easily in Heliopolis, Cairo.",
+  "start_url": "/ar",
+  "display": "standalone",
+  "background_color": "#0B0A1F",
+  "theme_color": "#0070CD",
+  "icons": [
+    {
+      "src": "/emc-logo.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/emc-logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}

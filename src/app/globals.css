@@ -1,0 +1,291 @@
+@import "tailwindcss";
+
+@source "..";
+
+@theme {
+  --font-cairo: 'Cairo', sans-serif;
+  --color-primary: #0070CD;
+  --color-accent-red: #E50000;
+  --color-accent-red-hover: #CC0000;
+}
+
+body {
+  font-family: var(--font-cairo), sans-serif;
+  background-color: #F8F9FA;
+  color: #1A1A2E;
+  overflow-x: hidden;
+}
+
+/* ==========================================
+   Vezeeta Style Search Component Classes
+   ========================================== */
+
+.vez-search-container {
+  @apply bg-white rounded-2xl w-full border border-gray-100;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  padding: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .vez-search-container {
+    padding: 1rem;
+  }
+}
+
+.vez-search-tabs {
+  @apply flex border-b border-gray-100 mb-4;
+}
+
+.vez-search-tab {
+  @apply flex-1 pb-4 pt-2 transition-all duration-200 border-b-2 border-transparent rounded-t-xl text-center;
+}
+
+.vez-search-tab:hover {
+  background-color: rgba(249, 250, 251, 0.5);
+}
+
+.vez-search-tab.active {
+  border-bottom-color: #0070CD;
+  background-color: rgba(0, 112, 205, 0.05);
+}
+
+.vez-tab-title {
+  @apply font-bold text-gray-700 transition-colors text-sm;
+}
+
+.vez-search-tab.active .vez-tab-title {
+  color: #0070CD;
+}
+
+@media (min-width: 640px) {
+  .vez-tab-title {
+    @apply text-base;
+  }
+}
+
+.vez-tab-desc {
+  @apply text-gray-400 font-medium text-xs;
+}
+
+@media (min-width: 640px) {
+  .vez-tab-desc {
+    @apply text-sm;
+  }
+}
+
+.vez-search-fields {
+  @apply flex flex-col md:flex-row items-center gap-4 md:gap-0;
+}
+
+.vez-search-field {
+  @apply flex flex-col w-full relative py-2 md:py-0;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .vez-search-field {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .vez-search-field {
+    border-inline-end: 1px solid #E2E8F0;
+  }
+  .vez-search-field:last-of-type {
+    border-inline-end: none;
+  }
+}
+
+.vez-search-field-label {
+  @apply font-bold text-gray-500 uppercase tracking-wider mb-1 text-[11px];
+}
+
+@media (min-width: 640px) {
+  .vez-search-field-label {
+    @apply text-xs;
+  }
+}
+
+.vez-search-field-value {
+  @apply font-bold text-base text-[#0070CD] bg-transparent border-none outline-none w-full;
+}
+
+.vez-search-field-value::placeholder {
+  color: #0070CD;
+  opacity: 0.7;
+}
+
+/* زرار البحث أحمر زي ستايل فيزيتا المشهور */
+.vez-search-btn {
+  @apply w-full md:w-auto text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 mt-2 md:mt-0;
+  background-color: #E50000;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  box-shadow: 0 4px 6px rgba(229, 0, 0, 0.15);
+  font-size: 15px;
+}
+
+@media (min-width: 640px) {
+  .vez-search-btn {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    box-shadow: 0 4px 6px rgba(229, 0, 0, 0.2);
+  }
+}
+
+@media (min-width: 768px) {
+  .vez-search-btn {
+    margin-inline-start: 0.5rem;
+  }
+}
+
+.vez-search-btn:hover {
+  background-color: #CC0000;
+  box-shadow: 0 6px 12px rgba(204, 0, 0, 0.25);
+}
+
+/* =============================================
+   PREMIUM CARD SYSTEM
+   ============================================= */
+
+.section-padding {
+  padding: 72px 16px;
+}
+
+@media (min-width: 768px) {
+  .section-padding {
+    padding: 100px 32px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section-padding {
+    padding: 120px 48px;
+  }
+}
+
+.section-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #0F172A;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+
+@media (min-width: 768px) {
+  .section-title {
+    font-size: 32px;
+  }
+}
+
+.section-subtitle {
+  font-size: 15px;
+  color: #64748B;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.vez-specialty-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  margin: 0 auto 16px;
+}
+
+.vez-specialty-item:hover .vez-specialty-icon {
+  transform: translateY(-4px) scale(1.05);
+}
+
+.vez-specialty-item {
+  text-align: center;
+  cursor: pointer;
+  padding: 24px 12px;
+  border-radius: 20px;
+  transition: all 0.25s ease;
+  background: transparent;
+}
+
+.vez-specialty-item:hover {
+  background: #F1F5F9;
+}
+
+.vez-specialty-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0F172A;
+  margin-top: 4px;
+}
+
+.vez-doctor-card {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.vez-doctor-card:hover {
+  box-shadow: 0 16px 36px -4px rgba(0, 112, 205, 0.08);
+  border-color: #0070CD;
+  transform: translateY(-3px);
+}
+
+.vez-offer-card {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+}
+
+.vez-offer-card:hover {
+  box-shadow: 0 16px 36px -4px rgba(15, 23, 42, 0.08);
+  transform: translateY(-3px);
+  border-color: #0070CD;
+}
+
+.vez-discount-badge {
+  position: absolute;
+  top: 12px;
+  background: #E50000;
+  color: white;
+  font-weight: 800;
+  padding: 5px 14px;
+  font-size: 12px;
+}
+
+[dir="ltr"] .vez-discount-badge {
+  left: 0;
+  border-radius: 0 20px 20px 0;
+}
+
+[dir="rtl"] .vez-discount-badge {
+  right: 0;
+  border-radius: 20px 0 0 20px;
+}
+
+.vez-service-banner {
+  border-radius: 20px;
+  padding: 36px 32px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+}
+
+.vez-service-banner:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 36px -4px rgba(15, 23, 42, 0.12);
+}
