@@ -3,6 +3,7 @@ import { Cairo } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import JsonLd from '@/components/JsonLd';
+import Script from 'next/script';
 import { ToastProvider } from '@/components/ui/Toast';
 import '../globals.css';
 
@@ -115,19 +116,17 @@ export default async function RootLayout({
   return (
     <html lang={locale} dir={direction} className={cairo.variable} suppressHydrationWarning>
       <body className={`${cairo.className} antialiased bg-[#F8F9FA] min-h-screen flex flex-col`}>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                  for(let registration of registrations) {
-                    registration.unregister();
-                  }
-                });
-              }
-            `
-          }}
-        />
+        <Script id="unregister-sw" strategy="afterInteractive">
+          {`
+            if ('serviceWorker' in navigator) {
+              navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let registration of registrations) {
+                  registration.unregister();
+                }
+              });
+            }
+          `}
+        </Script>
         <JsonLd />
         <NextIntlClientProvider messages={messages}>
           <ToastProvider>
