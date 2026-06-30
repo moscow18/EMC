@@ -3,6 +3,7 @@ import { Cairo } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import JsonLd from '@/components/JsonLd';
+import { ToastProvider } from '@/components/ui/Toast';
 import '../globals.css';
 
 // استخدام خط كايرو لدعمه الممتاز للغتين العربية والإنجليزية
@@ -129,13 +130,15 @@ export default async function RootLayout({
         />
         <JsonLd />
         <NextIntlClientProvider messages={messages}>
-          {/* لو عندك Navbar ضيفه هنا */}
-          
-          <main className="flex-grow">
-            {children}
-          </main>
+          <ToastProvider>
+            {/* لو عندك Navbar ضيفه هنا */}
+            
+            <main className="flex-grow">
+              {children}
+            </main>
 
-          {/* لو عندك Footer ضيفه هنا */}
+            {/* لو عندك Footer ضيفه هنا */}
+          </ToastProvider>
         </NextIntlClientProvider>
       </body>
     </html>

@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { Mail, Lock, ArrowRight, User, Loader2, AlertCircle } from 'lucide-react';
+import { Mail, Lock, ArrowRight, User, Loader2, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { useToast } from '@/components/ui/Toast';
 import { useLocale } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
@@ -11,6 +12,7 @@ import { supabase } from '@/lib/supabase';
 export default function LoginPage() {
   const locale = useLocale();
   const isAr = locale === 'ar';
+  const { showToast } = useToast();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -18,6 +20,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState<'google' | 'facebook' | null>(null);
   const [errorMsg, setErrorMsg] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   // Email & Password Auth
   const handleSubmit = async (e: React.FormEvent) => {
@@ -57,10 +60,11 @@ export default function LoginPage() {
 
         if (error) throw error;
 
-        alert(
+        showToast(
           isAr
             ? 'تم إنشاء الحساب بنجاح! يرجى مراجعة بريدك الإلكتروني لتأكيد الحساب.'
-            : 'Account created! Please check your email to verify your registration.'
+            : 'Account created! Please check your email to verify your registration.',
+          'success'
         );
         setIsLogin(true);
       }
@@ -200,14 +204,21 @@ export default function LoginPage() {
                     <div className="relative">
                       <Lock className="w-4 h-4 text-gray-400 absolute start-4 top-1/2 -translate-y-1/2" />
                       <input 
-                        type="password" 
+                        type={showPassword ? 'text' : 'password'} 
                         required
                         value={password}
                         onChange={e => setPassword(e.target.value)}
-                        className="w-full ps-11 pe-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 text-sm outline-none focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10 transition-all placeholder:text-gray-400"
+                        className="w-full ps-11 pe-11 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 text-sm outline-none focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10 transition-all placeholder:text-gray-400"
                         placeholder="••••••••"
                         dir="ltr"
                       />
+                      <button 
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute end-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-650 cursor-pointer"
+                      >
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
                     </div>
                   </div>
 

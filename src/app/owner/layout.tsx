@@ -7,6 +7,7 @@ import { LayoutDashboard, LogOut, Wallet, Receipt, PlusCircle, ArrowLeft, Messag
 import Link from 'next/link';
 import Image from 'next/image';
 import { playNotificationSound } from '@/lib/audio';
+import { ToastProvider } from '@/components/ui/Toast';
 import '../globals.css'; // import css stylesheet
 
 export default function OwnerLayout({ children }: { children: React.ReactNode }) {
@@ -110,7 +111,9 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
   const wrapRoot = (content: React.ReactNode) => (
     <html lang="ar" dir="rtl">
       <body className="antialiased bg-[#F8F9FA] text-[#1A1A2E] min-h-screen">
-        {content}
+        <ToastProvider>
+          {content}
+        </ToastProvider>
       </body>
     </html>
   );

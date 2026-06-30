@@ -8,6 +8,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { playNotificationSound } from '@/lib/audio';
+import { ToastProvider } from '@/components/ui/Toast';
 import '../globals.css';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -151,7 +152,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const wrapRoot = (content: React.ReactNode) => (
     <html lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
       <body className="antialiased bg-gray-50 min-h-screen text-start">
-        {content}
+        <ToastProvider>
+          {content}
+        </ToastProvider>
       </body>
     </html>
   );

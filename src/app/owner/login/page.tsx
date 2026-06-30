@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { Lock, Mail, Loader2, AlertCircle, ArrowLeft, ShieldAlert } from 'lucide-react';
+import { Lock, Mail, Loader2, AlertCircle, ArrowLeft, ShieldAlert, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -13,6 +13,7 @@ export default function OwnerLoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   
   // Lockout States
   const [lockoutSeconds, setLockoutSeconds] = useState(0);
@@ -137,15 +138,23 @@ export default function OwnerLoginPage() {
             <div className="relative">
               <Lock className="w-4 h-4 text-gray-400 absolute right-4 top-1/2 -translate-y-1/2" />
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 required
                 disabled={lockoutSeconds > 0}
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                className="w-full pe-11 ps-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 text-sm outline-none focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10 transition-all placeholder:text-gray-400 text-right disabled:opacity-50"
+                className="w-full pe-11 ps-11 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 text-sm outline-none focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/10 transition-all placeholder:text-gray-400 text-right disabled:opacity-50"
                 placeholder="••••••••"
                 dir="ltr"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                disabled={lockoutSeconds > 0}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-650 cursor-pointer"
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
             </div>
             <div className="text-left mt-1.5">
               <Link href="/owner/forgot-password" className="text-xs text-primary font-bold hover:underline">

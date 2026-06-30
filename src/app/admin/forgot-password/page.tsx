@@ -46,7 +46,11 @@ export default function AdminForgotPasswordPage() {
       if (!res.ok) throw new Error(data.error || 'فشل إرسال رمز التحقق');
 
       setStep('verify');
-      setSuccessMsg('تم إرسال رمز تحقق مؤقت مكون من 6 أرقام إلى بريدك الإلكتروني.');
+      if (data.devMode && data.code) {
+        setSuccessMsg(`⚠️ [وضع التطوير] لم يتم إعداد البريد الإلكتروني. رمز التحقق التجريبي هو: ${data.code}`);
+      } else {
+        setSuccessMsg('تم إرسال رمز تحقق مؤقت مكون من 6 أرقام إلى بريدك الإلكتروني.');
+      }
     } catch (err: any) {
       console.error(err);
       setErrorMsg(err.message || 'حدث خطأ أثناء إرسال رمز التحقق.');

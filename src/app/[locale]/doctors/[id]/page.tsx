@@ -10,6 +10,7 @@ import { doctors } from '@/data/doctors';
 import { motion, AnimatePresence } from 'framer-motion';
 import { isValidEgyptianPhone, isValidEmail } from '@/lib/validation';
 import { useRateLimit } from '@/hooks/useRateLimit';
+import { useToast } from '@/components/ui/Toast';
 
 interface DoctorDetails {
   about: { ar: string; en: string };
@@ -262,6 +263,7 @@ export default function DoctorProfilePage({ params }: { params: Promise<{ locale
   const resolvedParams = use(params);
   const locale = resolvedParams.locale;
   const id = resolvedParams.id;
+  const { showToast } = useToast();
 
   const t = useTranslations('Doctors');
   const tSpec = useTranslations('Specialties');
@@ -517,7 +519,10 @@ export default function DoctorProfilePage({ params }: { params: Promise<{ locale
     } catch (err: any) {
       console.error('Booking error:', err);
       setBookingStep('form');
-      alert(locale === 'ar' ? `حدث خطأ: ${err.message}` : `Error: ${err.message}`);
+      showToast(
+        locale === 'ar' ? `حدث خطأ: ${err.message}` : `Error: ${err.message}`,
+        'error'
+      );
     }
   };
 

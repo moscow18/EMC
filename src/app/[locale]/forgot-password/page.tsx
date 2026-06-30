@@ -40,11 +40,19 @@ export default function PatientForgotPasswordPage({ params }: { params: Promise<
       if (!res.ok) throw new Error(data.error || 'Failed to send verification code');
 
       setStep('verify');
-      setSuccessMsg(
-        isAr 
-          ? 'تم إرسال رمز التحقق المكون من 6 أرقام إلى بريدك الإلكتروني.' 
-          : 'A 6-digit verification code has been sent to your email.'
-      );
+      if (data.devMode && data.code) {
+        setSuccessMsg(
+          isAr 
+            ? `⚠️ [وضع التطوير] لم يتم إعداد البريد الإلكتروني. رمز التحقق التجريبي هو: ${data.code}` 
+            : `⚠️ [Dev Mode] Mail server not configured. Test OTP code is: ${data.code}`
+        );
+      } else {
+        setSuccessMsg(
+          isAr 
+            ? 'تم إرسال رمز التحقق المكون من 6 أرقام إلى بريدك الإلكتروني.' 
+            : 'A 6-digit verification code has been sent to your email.'
+        );
+      }
     } catch (err: any) {
       console.error(err);
       setErrorMsg(err.message || (isAr ? 'فشل إرسال الرمز، تأكد من صحة البريد الإلكتروني' : 'Failed to send OTP code. Please verify your email.'));

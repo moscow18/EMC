@@ -7,11 +7,13 @@ import { useRateLimit } from '@/hooks/useRateLimit';
 import { motion } from 'framer-motion';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle, AlertCircle } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { useToast } from '@/components/ui/Toast';
 import { isValidEgyptianPhone, isValidEmail, sanitizeFormData } from '@/lib/validation';
 
 export default function ContactSection() {
   const t = useTranslations('Contact');
   const locale = useLocale();
+  const { showToast } = useToast();
   const { ref, isVisible } = useScrollAnimation();
   const [formState, setFormState] = useState<'idle' | 'sending' | 'success'>('idle');
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
@@ -65,7 +67,10 @@ export default function ContactSection() {
     if (error) {
       console.error(error);
       setFormState('idle');
-      alert(locale === 'ar' ? 'حدث خطأ، حاول مرة أخرى' : 'An error occurred, please try again');
+      showToast(
+        locale === 'ar' ? 'حدث خطأ، حاول مرة أخرى' : 'An error occurred, please try again',
+        'error'
+      );
     } else {
       setFormState('success');
       setErrors({});

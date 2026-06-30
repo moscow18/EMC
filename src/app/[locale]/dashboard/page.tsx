@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 import { useLocale } from 'next-intl';
 import Link from 'next/link';
+import { useToast } from '@/components/ui/Toast';
 import { doctors } from '@/data/doctors';
 
 interface Appointment {
@@ -39,6 +40,7 @@ interface Review {
 export default function DashboardPage() {
   const locale = useLocale();
   const isAr = locale === 'ar';
+  const { showToast } = useToast();
   const [user, setUser] = useState<any>(null);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -96,7 +98,10 @@ export default function DashboardPage() {
       );
     } catch (err: any) {
       console.error(err);
-      alert(isAr ? 'فشل إلغاء الحجز، حاول مرة أخرى' : 'Failed to cancel, try again');
+      showToast(
+        isAr ? 'فشل إلغاء الحجز، حاول مرة أخرى' : 'Failed to cancel, try again',
+        'error'
+      );
     } finally {
       setActionLoading(null);
     }
@@ -181,7 +186,10 @@ export default function DashboardPage() {
         localStorage.setItem('emc_reviews', JSON.stringify(updated));
       }
 
-      alert(isAr ? 'شكراً لك! تم إرسال تقييمك بنجاح.' : 'Thank you! Your review has been submitted.');
+      showToast(
+        isAr ? 'شكراً لك! تم إرسال تقييمك بنجاح.' : 'Thank you! Your review has been submitted.',
+        'success'
+      );
       setReviewModalOpen(false);
     } catch (err) {
       console.error(err);
