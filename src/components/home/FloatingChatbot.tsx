@@ -47,7 +47,7 @@ export default function FloatingChatbot() {
     setIsTyping(true);
 
     try {
-      const apiBase = process.env.NEXT_PUBLIC_API_URL || 'https://hana-beefless-rocky.ngrok-free.app';
+      const apiBase = process.env.NEXT_PUBLIC_API_URL || 'https://hana-beefless-rocky.ngrok-free.dev';
       
       // تجميع الـ History كامل بالشكل اللي مستنيه سيرفر FastAPI
       const currentMessages = [...messages, { id: Date.now(), text: userMsg, isBot: false }];

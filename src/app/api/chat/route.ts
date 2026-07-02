@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const apiBase = process.env.NEXT_PUBLIC_API_URL || 'https://hana-beefless-rocky.ngrok-free.app';
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || 'https://hana-beefless-rocky.ngrok-free.dev';
     
     const response = await fetch(`${apiBase}/api/chat`, {
       method: 'POST',
