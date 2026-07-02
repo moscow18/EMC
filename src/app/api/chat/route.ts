@@ -5,7 +5,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const apiBase = process.env.NEXT_PUBLIC_API_URL || 'https://hana-beefless-rocky.ngrok-free.dev';
     
-    const response = await fetch(`${apiBase}/api/chat`, {
+    const response = await fetch(`${apiBase}/chat`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
