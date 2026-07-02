@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@supabase/supabase-js';
 import nodemailer from 'nodemailer';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
 // Simple in-memory server rate limiting cache
 const ipCache = new Map<string, { count: number; firstRequestTime: number }>();
@@ -66,7 +70,7 @@ export async function POST(request: NextRequest) {
     const dbDeptId = (department_id && isValidUUID(department_id)) ? department_id : null;
 
     // Insert appointment into Supabase
-    const { data: appointment, error: insertError } = await supabase
+    const { data: appointment, error: insertError } = await supabaseAdmin
       .from('appointments')
       .insert({
         patient_name: cleanPatientName,
@@ -139,54 +143,22 @@ export async function GET(request: NextRequest) {
 
     const newStatus = action === 'confirm' ? 'confirmed' : 'cancelled';
 
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('appointments')
       .update({ status: newStatus })
       .eq('id', appointmentId);
 
     if (error) {
+      console.error('Supabase update status error:', error);
       return NextResponse.json({ error: 'Update failed' }, { status: 500 });
     }
 
-    // Return HTML page for the user
-    const isConfirmed = action === 'confirm';
-    const html = `
-    <!DOCTYPE html>
-    <html lang="ar" dir="rtl">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>${isConfirmed ? 'تم تأكيد الحجز' : 'تم إلغاء الحجز'}</title>
-      <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Cairo', Arial, sans-serif; background: #F8F9FA; color: #1A1A2E; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
-        .card { background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 24px; padding: 48px 32px; text-align: center; max-width: 440px; width: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
-        .icon { width: 64px; height: 64px; border-radius: 50%; background: ${isConfirmed ? '#D1FAE5' : '#FEE2E2'}; color: ${isConfirmed ? '#10B981' : '#EF4444'}; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 28px; font-weight: bold; }
-        h1 { font-size: 22px; font-weight: 800; color: #1A1A2E; margin-bottom: 12px; }
-        p { color: #6B7280; font-size: 15px; line-height: 1.6; }
-      </style>
-    </head>
-    <body>
-      <div class="card">
-        <div class="icon">${isConfirmed ? '✓' : '✕'}</div>
-        <h1>${isConfirmed ? 'تم تأكيد حجزك بنجاح' : 'تم إلغاء الحجز'}</h1>
-        <p>${isConfirmed
-          ? 'تم تسجيل تأكيد موعدك بنجاح في نظام العيادة. نتطلع لرؤيتك قريباً.'
-          : 'تم إلغاء الحجز بنجاح بناءً على طلبك.'}</p>
-        <p style="margin-top: 16px; font-size: 12px; color: #9CA3AF;">سيتم إغلاق هذه الصفحة تلقائياً خلال لحظات...</p>
-      </div>
-      <script>
-        setTimeout(() => {
-          window.close();
-        }, 2000);
-      </script>
-    </body>
-    </html>`;
-
-    return new NextResponse(html, {
-      headers: { 'Content-Type': 'text/html; charset=utf-8' },
+    return NextResponse.json({
+      success: true,
+      message: action === 'confirm' ? 'confirmed' : 'cancelled'
     });
-  } catch {
+  } catch (err: any) {
+    console.error('Error in GET booking action:', err);
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });
   }
 }
