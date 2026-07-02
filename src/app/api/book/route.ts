@@ -69,6 +69,33 @@ export async function POST(request: NextRequest) {
     const dbDoctorId = (doctor_id && isValidUUID(doctor_id)) ? doctor_id : null;
     const dbDeptId = (department_id && isValidUUID(department_id)) ? department_id : null;
 
+    // Check if the slot is already booked for this doctor
+    if (dbDoctorId) {
+      const { data: existingBooking, error: checkError } = await supabaseAdmin
+        .from('appointments')
+        .select('id')
+        .eq('doctor_id', dbDoctorId)
+        .eq('appointment_date', appointment_date)
+        .eq('appointment_time', appointment_time)
+        .neq('status', 'cancelled')
+        .limit(1);
+
+      if (checkError) {
+        console.error('Error checking existing booking:', checkError);
+      }
+
+      if (existingBooking && existingBooking.length > 0) {
+        return NextResponse.json(
+          { 
+            error: locale === 'ar' 
+              ? 'عذراً، هذا الموعد محجوز بالفعل مع هذا الطبيب. يرجى اختيار موعد أو وقت آخر.' 
+              : 'Sorry, this slot is already booked for this doctor. Please choose a different time or date.' 
+          },
+          { status: 409 }
+        );
+      }
+    }
+
     // Insert appointment into Supabase
     const { data: appointment, error: insertError } = await supabaseAdmin
       .from('appointments')
