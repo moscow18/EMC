@@ -208,8 +208,10 @@ async function sendConfirmationEmail(params: EmailParams) {
   const isAr = locale === 'ar';
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://emc-bice.vercel.app';
-  const confirmUrl = `${baseUrl}/api/book?id=${appointmentId}&action=confirm`;
-  const cancelUrl = `${baseUrl}/api/book?id=${appointmentId}&action=cancel`;
+  const activeBaseUrl = baseUrl.includes('emc-clinic.com') ? 'https://emc-bice.vercel.app' : baseUrl;
+
+  const confirmUrl = `${activeBaseUrl}/${locale || 'ar'}/booking-action?id=${appointmentId}&action=confirm`;
+  const cancelUrl = `${activeBaseUrl}/${locale || 'ar'}/booking-action?id=${appointmentId}&action=cancel`;
 
   const subject = isAr
     ? 'تاكيد حجز موعدك - عيادة مصر الطبية EMC'
