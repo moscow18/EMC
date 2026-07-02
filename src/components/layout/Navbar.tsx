@@ -84,7 +84,7 @@ export default function Navbar() {
             </Link>
 
             {/* Desktop Links */}
-            <div className="hidden xl:flex items-center gap-1">
+            <div className="hidden lg:flex items-center gap-1">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
@@ -166,8 +166,8 @@ export default function Navbar() {
       </div>
 
       {/* Mobile Menu */}
-      <div className={`lg:hidden bg-white border-t border-gray-100 shadow-xl transition-all duration-300 overflow-hidden ${
-        isOpen ? 'max-h-[550px] opacity-100' : 'max-h-0 opacity-0'
+      <div className={`lg:hidden bg-white border-t border-gray-100 shadow-xl transition-all duration-300 overflow-y-auto ${
+        isOpen ? 'max-h-[calc(100vh-4rem)] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'
       }`}>
         <div className="px-4 py-4 flex flex-col gap-1">
           {navLinks.map((link) => (

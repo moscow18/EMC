@@ -110,6 +110,10 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
 
   const wrapRoot = (content: React.ReactNode) => (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <title>لوحة تحكم المدير المالي - عيادة EMC</title>
+      </head>
       <body className="antialiased bg-[#F8F9FA] text-[#1A1A2E] min-h-screen">
         <ToastProvider>
           {content}

@@ -151,7 +151,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const wrapRoot = (content: React.ReactNode) => (
     <html lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'} suppressHydrationWarning>
-      <body className="antialiased bg-gray-50 min-h-screen text-start">
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <title>{lang === 'ar' ? 'الاستقبال - عيادة EMC' : 'Receptionist - EMC Clinic'}</title>
+      </head>
+      <body className="antialiased bg-gray-50 min-h-screen text-start overflow-x-hidden">
         <ToastProvider>
           {content}
         </ToastProvider>
@@ -201,7 +205,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   if (!authenticated) return null;
 
   return wrapRoot(
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-gray-50 flex overflow-x-hidden">
       {/* Sidebar */}
       <aside className={`fixed lg:static inset-y-0 ${lang === 'ar' ? 'right-0' : 'left-0'} z-50 w-72 bg-white border-e border-gray-200 text-gray-700 transform transition-transform duration-300 ${
         sidebarOpen ? 'translate-x-0' : (lang === 'ar' ? 'translate-x-full' : '-translate-x-full')
@@ -265,7 +269,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       )}
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-screen">
+      <div className="flex-1 flex flex-col min-h-screen overflow-x-hidden">
         {/* Top bar */}
         <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
           <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 rounded-xl hover:bg-gray-100">

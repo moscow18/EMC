@@ -91,16 +91,19 @@ export default function AdminDoctorsPage() {
   return (
     <div className="space-y-6 text-start">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <p className="text-gray-500">Manage your clinic doctors with full credentials and profile photos</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-bold text-gray-900">الأطباء</h2>
+          <p className="text-gray-500 text-sm mt-1">Manage your clinic doctors with full credentials and profile photos</p>
+        </div>
         <button onClick={() => openModal()}
-          className="flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl transition-colors shadow-lg shadow-primary/25">
+          className="flex items-center justify-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl transition-colors shadow-lg shadow-primary/25 w-full sm:w-auto shrink-0 cursor-pointer">
           <Plus className="w-4 h-4" /> Add Doctor
         </button>
       </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      {/* Table view for desktop */}
+      <div className="hidden md:block bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -150,10 +153,10 @@ export default function AdminDoctorsPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <button onClick={() => openModal(doc)} className="p-2 rounded-lg hover:bg-[#F0F6FF] text-primary transition-colors">
+                        <button onClick={() => openModal(doc)} className="p-2 rounded-lg hover:bg-[#F0F6FF] text-primary transition-colors cursor-pointer">
                           <Pencil className="w-4 h-4" />
                         </button>
-                        <button onClick={() => handleDelete(doc.id)} className="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors">
+                        <button onClick={() => handleDelete(doc.id)} className="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors cursor-pointer">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -164,6 +167,66 @@ export default function AdminDoctorsPage() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Card list view for mobile */}
+      <div className="block md:hidden space-y-4">
+        {loading ? (
+          <div className="flex justify-center py-12"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>
+        ) : doctors.length === 0 ? (
+          <div className="text-center py-12 text-gray-400 bg-white rounded-2xl border border-gray-100">No doctors found</div>
+        ) : (
+          doctors.map((doc) => (
+            <div key={doc.id} className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-gray-100 overflow-hidden shrink-0 border border-gray-200">
+                  {doc.image_url ? (
+                    <img src={doc.image_url} alt={doc.name} className="w-full h-full object-cover object-top" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400"><ImageIcon className="w-5 h-5" /></div>
+                  )}
+                </div>
+                <div className="flex-grow">
+                  <h4 className="font-bold text-gray-900 text-base">{doc.name}</h4>
+                  <p className="text-xs text-gray-500">{doc.name_ar || 'لا يوجد اسم عربي'}</p>
+                </div>
+                <span className={`px-2.5 py-1 rounded-full text-xs font-semibold shrink-0 ${doc.is_active ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-500'}`}>
+                  {doc.is_active ? 'Active' : 'Inactive'}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 py-3 border-y border-gray-100 text-sm">
+                <div>
+                  <span className="text-[10px] text-gray-400 block font-bold uppercase tracking-wider">Specialty</span>
+                  <span className="text-gray-800 font-semibold">{doc.specialty}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-gray-400 block font-bold uppercase tracking-wider">Experience</span>
+                  <span className="text-gray-800 font-semibold">{doc.experience_years} years</span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-gray-400 block font-bold uppercase tracking-wider">Rating</span>
+                  <span className="text-gray-800 font-semibold flex items-center gap-1">
+                    <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" /> {doc.rating}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-gray-400 block font-bold uppercase tracking-wider">Fee</span>
+                  <span className="text-gray-800 font-semibold">{doc.consultation_fee} EGP</span>
+                </div>
+              </div>
+
+              <div className="flex gap-2 justify-end pt-1">
+                <button onClick={() => openModal(doc)} className="flex-grow py-2.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1 cursor-pointer">
+                  <Pencil className="w-3.5 h-3.5" /> Edit
+                </button>
+                <button onClick={() => handleDelete(doc.id)} className="py-2.5 px-4 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl text-xs font-bold transition-all flex items-center justify-center cursor-pointer">
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       {/* Modal Form */}
