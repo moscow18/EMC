@@ -33,8 +33,8 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      {/* Toast container floating on screen */}
-      <div className="fixed bottom-6 right-6 z-[9999] flex flex-col gap-3 max-w-sm w-full pointer-events-none">
+      {/* Toast container floating on screen - responsive for mobile/desktop */}
+      <div className="fixed bottom-4 right-4 left-4 sm:left-auto sm:right-6 sm:bottom-6 z-[9999] flex flex-col gap-3 max-w-sm pointer-events-none">
         <AnimatePresence>
           {toasts.map(toast => (
             <ToastItem key={toast.id} toast={toast} onClose={removeToast} />
@@ -63,36 +63,49 @@ function ToastItem({ toast, onClose }: { toast: Toast; onClose: (id: string) => 
 
   const config = {
     success: {
-      bg: 'bg-emerald-950/90 backdrop-blur-md border-emerald-500/30 text-emerald-100',
-      icon: <CheckCircle className="w-5 h-5 text-emerald-400" />,
-      glow: 'shadow-xl shadow-emerald-500/10'
+      bg: 'bg-white/95 backdrop-blur-md border-emerald-150 text-slate-800',
+      iconBg: 'bg-emerald-50 text-emerald-600 border border-emerald-100/50',
+      accent: 'bg-emerald-500',
+      icon: <CheckCircle className="w-5 h-5" />
     },
     error: {
-      bg: 'bg-rose-950/90 backdrop-blur-md border-rose-500/30 text-rose-100',
-      icon: <AlertCircle className="w-5 h-5 text-rose-400" />,
-      glow: 'shadow-xl shadow-rose-500/10'
+      bg: 'bg-white/95 backdrop-blur-md border-rose-150 text-slate-800',
+      iconBg: 'bg-rose-50 text-rose-600 border border-rose-100/50',
+      accent: 'bg-rose-500',
+      icon: <AlertCircle className="w-5 h-5" />
     },
     info: {
-      bg: 'bg-slate-950/90 backdrop-blur-md border-slate-500/30 text-slate-100',
-      icon: <Info className="w-5 h-5 text-sky-400" />,
-      glow: 'shadow-xl shadow-sky-500/10'
+      bg: 'bg-white/95 backdrop-blur-md border-sky-150 text-slate-800',
+      iconBg: 'bg-sky-50 text-sky-600 border border-sky-100/50',
+      accent: 'bg-sky-500',
+      icon: <Info className="w-5 h-5" />
     }
   }[toast.type];
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.95 }}
+      initial={{ opacity: 0, y: 15, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
-      className={`pointer-events-auto p-4.5 rounded-2xl border flex items-start gap-3.5 shadow-lg ${config.bg} ${config.glow}`}
+      exit={{ opacity: 0, y: -10, scale: 0.95, transition: { duration: 0.15 } }}
+      className={`pointer-events-auto p-4 rounded-2xl border flex items-center gap-3.5 shadow-2xl relative overflow-hidden ${config.bg}`}
     >
-      <div className="shrink-0 pt-0.5">{config.icon}</div>
-      <div className="flex-grow text-xs font-bold leading-relaxed text-start">
+      {/* Side color accent bar */}
+      <div className={`absolute top-0 bottom-0 w-1 start-0 ${config.accent}`} />
+      
+      {/* Icon with colored container */}
+      <div className={`shrink-0 p-2 rounded-xl ${config.iconBg}`}>
+        {config.icon}
+      </div>
+      
+      {/* Message content */}
+      <div className="flex-grow text-xs font-bold leading-relaxed text-start text-gray-800 ps-1">
         {toast.message}
       </div>
+      
+      {/* Close button */}
       <button
         onClick={() => onClose(toast.id)}
-        className="shrink-0 p-0.5 rounded-lg hover:bg-white/10 text-white/40 hover:text-white transition-colors cursor-pointer"
+        className="shrink-0 p-1.5 rounded-xl hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
       >
         <X className="w-4 h-4" />
       </button>
