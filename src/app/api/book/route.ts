@@ -207,7 +207,7 @@ async function sendConfirmationEmail(params: EmailParams) {
   const { to, patientName, doctorName, department, date, time, appointmentId, locale } = params;
   const isAr = locale === 'ar';
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://emc-bice.vercel.app';
   const confirmUrl = `${baseUrl}/api/book?id=${appointmentId}&action=confirm`;
   const cancelUrl = `${baseUrl}/api/book?id=${appointmentId}&action=cancel`;
 
