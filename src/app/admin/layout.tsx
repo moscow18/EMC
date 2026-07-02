@@ -82,12 +82,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const isSoundEnabled = localStorage.getItem('emc_notifications_sound_enabled') !== 'false';
     if (!isSoundEnabled) return;
     const soundType = localStorage.getItem('emc_notification_sound') || 'double_beep';
-    const volume = Number(localStorage.getItem('emc_notifications_volume') || '0.5');
+    const volume = Number(localStorage.getItem('emc_notifications_volume') || '1.0');
     playNotificationSound(soundType, volume);
   };
 
   useEffect(() => {
-    if (pathname === '/admin/login') {
+    if (pathname === '/admin/login' || pathname === '/admin/forgot-password') {
       setAuthenticated(false);
       return;
     }
@@ -163,8 +163,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     </html>
   );
 
-  // Login page - no layout
-  if (pathname === '/admin/login') {
+  // Login & Forgot Password pages - no layout
+  if (pathname === '/admin/login' || pathname === '/admin/forgot-password') {
     return wrapRoot(<>{children}</>);
   }
 

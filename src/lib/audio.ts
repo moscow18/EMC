@@ -14,7 +14,7 @@ export const playNotificationSound = (soundType = 'double_beep', volume = 0.5) =
       oscillator.frequency.value = freq;
       
       gainNode.gain.setValueAtTime(0, startTime);
-      gainNode.gain.linearRampToValueAtTime(volume * 0.4, startTime + 0.02);
+      gainNode.gain.linearRampToValueAtTime(volume * 0.95, startTime + 0.02);
       gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
       
       oscillator.start(startTime);

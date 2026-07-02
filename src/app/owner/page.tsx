@@ -5,7 +5,7 @@ import {
   TrendingUp, TrendingDown, Wallet, Plus, Trash2, ArrowUpRight, 
   ArrowDownRight, PieChart, Loader2, Globe, HeartPulse, Stethoscope, 
   Tag, MapPin, Users, Building, Pencil, UserPlus, Check, X, AlertCircle, Key,
-  Download, Upload, Save, Volume2, Play, Database, FileText
+  Download, Upload, Save, Volume2, Play, Database, FileText, Eye, EyeOff
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { playNotificationSound } from '@/lib/audio';
@@ -150,11 +150,12 @@ export default function OwnerDashboard() {
 
   // Sound settings
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [soundVolume, setSoundVolume] = useState(0.5);
+  const [soundVolume, setSoundVolume] = useState(1.0);
   const [soundType, setSoundType] = useState('double_beep');
 
   // Owner credentials form
   const [ownerPasswordForm, setOwnerPasswordForm] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   // Load Everything
   const loadData = async () => {
@@ -247,7 +248,7 @@ export default function OwnerDashboard() {
       const storedSoundEnabled = localStorage.getItem('emc_notifications_sound_enabled');
       setSoundEnabled(storedSoundEnabled === null ? true : storedSoundEnabled === 'true');
       const storedVolume = localStorage.getItem('emc_notifications_volume');
-      setSoundVolume(storedVolume ? Number(storedVolume) : 0.5);
+      setSoundVolume(storedVolume ? Number(storedVolume) : 1.0);
       const storedSoundType = localStorage.getItem('emc_notification_sound');
       setSoundType(storedSoundType || 'double_beep');
 
@@ -1643,14 +1644,23 @@ export default function OwnerDashboard() {
                 <form onSubmit={handleSaveOwnerPassword} className="space-y-3">
                   <div>
                     <label className="text-[10px] text-gray-400 mb-1 block">{isAr ? 'كلمة المرور الجديدة' : 'New Password'}</label>
-                    <input
-                      type="password"
-                      required
-                      placeholder="••••••••"
-                      value={ownerPasswordForm}
-                      onChange={e => setOwnerPasswordForm(e.target.value)}
-                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:bg-white outline-none rounded-xl text-xs transition-all text-start"
-                    />
+                    <div className="relative">
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        required
+                        placeholder="••••••••"
+                        value={ownerPasswordForm}
+                        onChange={e => setOwnerPasswordForm(e.target.value)}
+                        className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:bg-white outline-none rounded-xl text-xs transition-all text-start"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-650 cursor-pointer"
+                      >
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
                   </div>
                   <button
                     type="submit"

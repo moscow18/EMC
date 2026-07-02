@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { playNotificationSound } from '@/lib/audio';
-import { User, Shield, Volume2, Save, Play, RefreshCw, KeyRound, AlertCircle, CheckCircle, Globe } from 'lucide-react';
+import { User, Shield, Volume2, Save, Play, RefreshCw, KeyRound, AlertCircle, CheckCircle, Globe, Eye, EyeOff } from 'lucide-react';
 
 interface StaffUser {
   email: string;
@@ -25,10 +25,11 @@ export default function AdminProfilePage() {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   // Audio Settings state
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [volume, setVolume] = useState(0.5);
+  const [volume, setVolume] = useState(1.0);
   const [soundType, setSoundType] = useState('double_beep');
 
   // Language setting state
@@ -93,7 +94,7 @@ export default function AdminProfilePage() {
       setSoundEnabled(storedSoundEnabled === null ? true : storedSoundEnabled === 'true');
       
       const storedVolume = localStorage.getItem('emc_notifications_volume');
-      setVolume(storedVolume ? Number(storedVolume) : 0.5);
+      setVolume(storedVolume ? Number(storedVolume) : 1.0);
 
       const storedSoundType = localStorage.getItem('emc_notification_sound');
       setSoundType(storedSoundType || 'double_beep');
@@ -313,14 +314,23 @@ export default function AdminProfilePage() {
               <label className="text-xs font-bold text-gray-500 mb-1 block">
                 {user?.role === 'admin' ? t.passLabelAdmin : t.passLabel}
               </label>
-              <input
-                type="password"
-                required={user?.role !== 'admin'}
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-250 focus:border-primary focus:bg-white outline-none rounded-xl text-sm transition-all"
-                dir="ltr"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required={user?.role !== 'admin'}
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  className="w-full px-4 py-3 pe-12 bg-gray-50 border border-gray-250 focus:border-primary focus:bg-white outline-none rounded-xl text-sm transition-all"
+                  dir="ltr"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
             </div>
 
             <div className="pt-2">

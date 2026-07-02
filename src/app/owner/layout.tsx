@@ -24,7 +24,7 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
     const isSoundEnabled = localStorage.getItem('emc_notifications_sound_enabled') !== 'false';
     if (!isSoundEnabled) return;
     const soundType = localStorage.getItem('emc_notification_sound') || 'double_beep';
-    const volume = Number(localStorage.getItem('emc_notifications_volume') || '0.5');
+    const volume = Number(localStorage.getItem('emc_notifications_volume') || '1.0');
     playNotificationSound(soundType, volume);
   };
 
@@ -65,7 +65,7 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
   }, [pathname, authenticated]);
 
   useEffect(() => {
-    if (pathname === '/owner/login') {
+    if (pathname === '/owner/login' || pathname === '/owner/forgot-password') {
       setAuthenticated(false);
       setLoading(false);
       return;
@@ -82,7 +82,9 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
     async function checkAuth() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        router.push('/owner/login');
+        if (pathname !== '/owner/forgot-password') {
+          router.push('/owner/login');
+        }
       } else {
         setAuthenticated(true);
       }
@@ -91,7 +93,7 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
     checkAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session && !localStorage.getItem('emc_owner_session') && pathname !== '/owner/login') {
+      if (!session && !localStorage.getItem('emc_owner_session') && pathname !== '/owner/login' && pathname !== '/owner/forgot-password') {
         router.push('/owner/login');
         setAuthenticated(false);
       } else if (session) {
@@ -122,7 +124,7 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
     </html>
   );
 
-  if (pathname === '/owner/login') {
+  if (pathname === '/owner/login' || pathname === '/owner/forgot-password') {
     return wrapRoot(<>{children}</>);
   }
 
