@@ -189,90 +189,251 @@ async function sendConfirmationEmail(params: EmailParams) {
     ? 'تاكيد حجز موعدك - عيادة مصر الطبية EMC'
     : 'Appointment Booking Confirmation - Egypt Medical Clinic EMC';
 
-  const html = `
-  <!DOCTYPE html>
+  const html = `<!DOCTYPE html>
   <html lang="${locale}" dir="${isAr ? 'rtl' : 'ltr'}">
-  <head><meta charset="UTF-8"></head>
-  <body style="margin:0;padding:0;font-family:'Cairo',Arial,sans-serif;background:#f4f6f7;">
-    <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:white;border-radius:16px;overflow:hidden;margin-top:32px;margin-bottom:32px;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
-      <!-- Header -->
-      <tr>
-        <td style="background:linear-gradient(135deg,#0070CD,#004C8C);padding:32px;text-align:center;">
-          <h1 style="color:white;margin:0;font-size:28px;font-weight:800;">EMC</h1>
-          <p style="color:rgba(255,255,255,0.8);margin:8px 0 0;font-size:14px;">
-            ${isAr ? 'عيادة مصر الطبية - مصر الجديدة' : 'Egypt Medical Clinic - Heliopolis'}
-          </p>
-        </td>
-      </tr>
-      <!-- Body -->
-      <tr>
-        <td style="padding:32px;">
-          <h2 style="color:#1A1A2E;font-size:22px;margin:0 0 16px;">
-            ${isAr ? `مرحبا ${patientName}` : `Hello ${patientName}`}
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Outfit:wght@400;600;700;800&display=swap');
+      
+      * {
+        font-family: ${isAr ? "'Cairo', 'Helvetica Neue', Helvetica, Arial, sans-serif" : "'Outfit', 'Helvetica Neue', Helvetica, Arial, sans-serif"};
+      }
+      
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #F8FAFC;
+        -webkit-font-smoothing: antialiased;
+      }
+      
+      .wrapper {
+        width: 100%;
+        background-color: #F8FAFC;
+        padding: 40px 0;
+      }
+      
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: #FFFFFF;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+        border: 1px solid #E2E8F0;
+      }
+      
+      .header {
+        background: linear-gradient(135deg, #0070CD, #004C8C);
+        padding: 40px 32px;
+        text-align: center;
+      }
+      
+      .logo-img {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        background: #FFFFFF;
+        padding: 6px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        display: inline-block;
+      }
+      
+      .header-title {
+        color: #FFFFFF;
+        margin: 16px 0 4px;
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+      }
+      
+      .header-sub {
+        color: rgba(255, 255, 255, 0.85);
+        margin: 0;
+        font-size: 13px;
+        font-weight: 600;
+      }
+      
+      .content {
+        padding: 40px 32px;
+      }
+      
+      .greeting {
+        color: #1A1A2E;
+        font-size: 20px;
+        font-weight: 800;
+        margin: 0 0 12px;
+        text-align: ${isAr ? 'right' : 'left'};
+      }
+      
+      .intro-text {
+        color: #64748B;
+        font-size: 14px;
+        line-height: 1.7;
+        margin: 0 0 32px;
+        text-align: ${isAr ? 'right' : 'left'};
+      }
+      
+      .details-card {
+        background-color: #F8FAFC;
+        border-radius: 20px;
+        border: 1px solid #EDF2F7;
+        padding: 24px;
+        margin-bottom: 32px;
+        text-align: ${isAr ? 'right' : 'left'};
+      }
+      
+      .detail-row {
+        margin-bottom: 16px;
+      }
+      
+      .detail-row:last-child {
+        margin-bottom: 0;
+      }
+      
+      .detail-label {
+        color: #64748B;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      
+      .detail-value {
+        color: #1A1A2E;
+        font-size: 14px;
+        font-weight: 700;
+      }
+      
+      .detail-highlight {
+        color: #0070CD;
+      }
+      
+      .actions-table {
+        width: 100%;
+        margin-bottom: 16px;
+      }
+      
+      .action-cell {
+        width: 50%;
+        padding: 0 8px;
+      }
+      
+      .btn {
+        display: block;
+        padding: 14px 20px;
+        text-decoration: none;
+        border-radius: 16px;
+        font-weight: 800;
+        font-size: 14px;
+        text-align: center;
+      }
+      
+      .btn-confirm {
+        background-color: #10B981;
+        color: #FFFFFF !important;
+        box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
+      }
+      
+      .btn-cancel {
+        background-color: #EF4444;
+        color: #FFFFFF !important;
+        box-shadow: 0 4px 14px rgba(239, 68, 68, 0.2);
+      }
+      
+      .footer {
+        background-color: #F8FAFC;
+        padding: 32px;
+        text-align: center;
+        border-top: 1px solid #E2E8F0;
+      }
+      
+      .footer-contact {
+        color: #64748B;
+        font-size: 12px;
+        font-weight: 600;
+        margin: 0 0 8px;
+      }
+      
+      .footer-copyright {
+        color: #94A3B8;
+        font-size: 11px;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="container">
+        
+        <!-- Header -->
+        <div class="header">
+          <img src="https://emc-bice.vercel.app/emc-logo.jpg" class="logo-img" alt="EMC Logo" />
+          <h1 class="header-title">${isAr ? 'عيادة مصر الطبية' : 'Egypt Medical Clinic'}</h1>
+          <p class="header-sub">${isAr ? 'تأكيد وحفظ مواعيد الحجوزات الطبية' : 'Medical Appointments Portal'}</p>
+        </div>
+        
+        <!-- Content -->
+        <div class="content">
+          <h2 class="greeting">
+            ${isAr ? `مرحباً بك، ${patientName}` : `Hello, ${patientName}`}
           </h2>
-          <p style="color:#64748B;font-size:15px;line-height:1.8;margin:0 0 24px;">
+          <p class="intro-text">
             ${isAr
-              ? 'تم استلام طلب حجز موعدك بنجاح. يرجى مراجعة التفاصيل والتأكيد أو الإلغاء.'
-              : 'Your appointment booking has been received. Please review the details and confirm or cancel.'}
+              ? 'تم استلام طلب حجز موعدك بنجاح في عيادتنا. يرجى مراجعة تفاصيل الموعد أدناه وتأكيده لتثبيت الحجز، أو إلغائه إذا كنت ترغب في تغيير الموعد.'
+              : 'We have received your appointment request. Please review the details below and confirm to secure your slot, or cancel if you wish to change it.'}
           </p>
-
+          
           <!-- Appointment Details -->
-          <table width="100%" cellpadding="12" cellspacing="0" style="background:#F8FAFC;border-radius:12px;border:1px solid #E2E8F0;margin-bottom:24px;">
-            <tr>
-              <td style="color:#64748B;font-size:13px;font-weight:700;border-bottom:1px solid #E2E8F0;">
-                ${isAr ? 'الطبيب' : 'Doctor'}
-              </td>
-              <td style="color:#1A1A2E;font-size:14px;font-weight:700;border-bottom:1px solid #E2E8F0;">
-                ${doctorName}${department ? ` - ${department}` : ''}
-              </td>
-            </tr>
-            <tr>
-              <td style="color:#64748B;font-size:13px;font-weight:700;border-bottom:1px solid #E2E8F0;">
-                ${isAr ? 'التاريخ' : 'Date'}
-              </td>
-              <td style="color:#0070CD;font-size:14px;font-weight:700;border-bottom:1px solid #E2E8F0;">
-                ${date}
-              </td>
-            </tr>
-            <tr>
-              <td style="color:#64748B;font-size:13px;font-weight:700;">
-                ${isAr ? 'الوقت' : 'Time'}
-              </td>
-              <td style="color:#0070CD;font-size:14px;font-weight:700;">
-                ${time}
-              </td>
-            </tr>
-          </table>
-
+          <div class="details-card">
+            <div class="detail-row">
+              <div class="detail-label">${isAr ? '🩺 التخصص والطبيب:' : '🩺 Doctor:'}</div>
+              <div class="detail-value">${doctorName}${department ? ` (${department})` : ''}</div>
+            </div>
+            <div style="height: 1px; background-color: #E2E8F0; margin: 12px 0;"></div>
+            <div class="detail-row">
+              <div class="detail-label">${isAr ? '📅 تاريخ الموعد:' : '📅 Date:'}</div>
+              <div class="detail-value detail-highlight">${date}</div>
+            </div>
+            <div style="height: 1px; background-color: #E2E8F0; margin: 12px 0;"></div>
+            <div class="detail-row">
+              <div class="detail-label">${isAr ? '⏰ توقيت الموعد:' : '⏰ Time:'}</div>
+              <div class="detail-value detail-highlight">${time}</div>
+            </div>
+          </div>
+          
           <!-- Action Buttons -->
-          <table width="100%" cellpadding="0" cellspacing="0">
+          <table class="actions-table" cellpadding="0" cellspacing="0" border="0">
             <tr>
-              <td style="padding:8px;text-align:center;" width="50%">
-                <a href="${confirmUrl}" style="display:inline-block;width:100%;padding:14px 0;background:#10B981;color:white;text-decoration:none;border-radius:12px;font-weight:800;font-size:15px;text-align:center;">
-                  ${isAr ? 'تاكيد الحجز' : 'Confirm'}
+              <td class="action-cell">
+                <a href="${confirmUrl}" class="btn btn-confirm">
+                  ${isAr ? '✓ تأكيد حجز الموعد' : '✓ Confirm Booking'}
                 </a>
               </td>
-              <td style="padding:8px;text-align:center;" width="50%">
-                <a href="${cancelUrl}" style="display:inline-block;width:100%;padding:14px 0;background:#EF4444;color:white;text-decoration:none;border-radius:12px;font-weight:800;font-size:15px;text-align:center;">
-                  ${isAr ? 'الغاء الحجز' : 'Cancel'}
+              <td class="action-cell">
+                <a href="${cancelUrl}" class="btn btn-cancel">
+                  ${isAr ? '✕ إلغاء الحجز' : '✕ Cancel Booking'}
                 </a>
               </td>
             </tr>
           </table>
-        </td>
-      </tr>
-      <!-- Footer -->
-      <tr>
-        <td style="padding:24px;background:#F8FAFC;text-align:center;border-top:1px solid #E2E8F0;">
-          <p style="color:#94A3B8;font-size:12px;margin:0;">
-            ${isAr ? 'الهاتف: 01044437797 | البريد الالكتروني: emc.egypt12@gmail.com' : 'Phone: 01044437797 | Email: emc.egypt12@gmail.com'}
+          
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+          <p class="footer-contact">
+            ${isAr ? '📞 هاتف الدعم: 01044437797 | ✉ البريد: emc.egypt12@gmail.com' : '📞 Call support: 01044437797 | ✉ Email: emc.egypt12@gmail.com'}
           </p>
-          <p style="color:#CBD5E1;font-size:11px;margin:8px 0 0;">
-            ${isAr ? 'حقوق النشر محفوظة - عيادة مصر الطبية - مصر الجديدة، القاهرة' : 'Egypt Medical Clinic - Heliopolis, Cairo'}
+          <p class="footer-copyright">
+            ${isAr 
+              ? 'حقوق النشر محفوظة © 2026 عيادة مصر الطبية EMC - مصر الجديدة، القاهرة' 
+              : 'Copyright © 2026 Egypt Medical Clinic EMC - Heliopolis, Cairo'}
           </p>
-        </td>
-      </tr>
-    </table>
+        </div>
+        
+      </div>
+    </div>
   </body>
   </html>`;
 
