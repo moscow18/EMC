@@ -157,6 +157,19 @@ export default function OwnerDashboard() {
   const [ownerPasswordForm, setOwnerPasswordForm] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
+  // Custom Confirmation Modal State
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => {}
+  });
+
   // Load Everything
   const loadData = async () => {
     setLoading(true);
@@ -320,20 +333,26 @@ export default function OwnerDashboard() {
     }
   };
 
-  const handleDeleteExpense = async (id: string) => {
-    if (!confirm(isAr ? 'هل أنت متأكد من حذف هذا المصروف؟' : 'Are you sure you want to delete this expense?')) return;
-    try {
-      const { error } = await supabase.from('expenses').delete().eq('id', id);
-      if (error) {
-        const updated = expenses.filter(e => e.id !== id);
-        setExpenses(updated);
-        localStorage.setItem('emc_owner_expenses', JSON.stringify(updated));
-      } else {
-        loadData();
+  const handleDeleteExpense = (id: string) => {
+    setConfirmModal({
+      isOpen: true,
+      title: isAr ? 'حذف المصروف' : 'Delete Expense',
+      message: isAr ? 'هل أنت متأكد من حذف هذا المصروف؟ لا يمكن التراجع عن هذا الإجراء.' : 'Are you sure you want to delete this expense? This action cannot be undone.',
+      onConfirm: async () => {
+        try {
+          const { error } = await supabase.from('expenses').delete().eq('id', id);
+          if (error) {
+            const updated = expenses.filter(e => e.id !== id);
+            setExpenses(updated);
+            localStorage.setItem('emc_owner_expenses', JSON.stringify(updated));
+          } else {
+            loadData();
+          }
+        } catch (err) {
+          console.error(err);
+        }
       }
-    } catch (err) {
-      console.error(err);
-    }
+    });
   };
 
   // Doctor photo file upload converter
@@ -448,14 +467,20 @@ export default function OwnerDashboard() {
     }
   };
 
-  const handleDeleteDoctor = async (id: string) => {
-    if (!confirm(isAr ? 'هل أنت متأكد من حذف هذا الطبيب؟' : 'Are you sure you want to delete this doctor?')) return;
-    try {
-      await supabase.from('doctors').delete().eq('id', id);
-      loadData();
-    } catch (err) {
-      console.error(err);
-    }
+  const handleDeleteDoctor = (id: string) => {
+    setConfirmModal({
+      isOpen: true,
+      title: isAr ? 'حذف الطبيب' : 'Delete Doctor',
+      message: isAr ? 'هل أنت متأكد من حذف هذا الطبيب؟ سيتم إزالة ملفه من قائمة الأطباء.' : 'Are you sure you want to delete this doctor? Their profile will be removed from the list.',
+      onConfirm: async () => {
+        try {
+          await supabase.from('doctors').delete().eq('id', id);
+          loadData();
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    });
   };
 
   // Offer Handlers
@@ -500,14 +525,20 @@ export default function OwnerDashboard() {
     }
   };
 
-  const handleDeleteOffer = async (id: string) => {
-    if (!confirm(isAr ? 'هل تريد حذف هذا العرض؟' : 'Delete this offer?')) return;
-    try {
-      await supabase.from('offers').delete().eq('id', id);
-      loadData();
-    } catch (err) {
-      console.error(err);
-    }
+  const handleDeleteOffer = (id: string) => {
+    setConfirmModal({
+      isOpen: true,
+      title: isAr ? 'حذف العرض' : 'Delete Offer',
+      message: isAr ? 'هل تريد حذف هذا العرض من قائمة العروض؟' : 'Are you sure you want to delete this offer?',
+      onConfirm: async () => {
+        try {
+          await supabase.from('offers').delete().eq('id', id);
+          loadData();
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    });
   };
 
   // Branch Handlers
@@ -534,15 +565,21 @@ export default function OwnerDashboard() {
   };
 
   const handleDeleteBranch = (id: string) => {
-    if (!confirm(isAr ? 'هل تريد حذف هذا الفرع؟ جميع الموظفين المعينين هنا سيفقدون فرعهم.' : 'Delete this branch? Associated staff assignments will reset.')) return;
-    const updated = branches.filter(b => b.id !== id);
-    setBranches(updated);
-    localStorage.setItem('emc_branches', JSON.stringify(updated));
-    
-    // Reset staff assignments to that branch
-    const updatedStaff = receptionists.map(r => r.branch_id === id ? { ...r, branch_id: '' } : r);
-    setReceptionists(updatedStaff);
-    localStorage.setItem('emc_receptionists', JSON.stringify(updatedStaff));
+    setConfirmModal({
+      isOpen: true,
+      title: isAr ? 'حذف الفرع' : 'Delete Branch',
+      message: isAr ? 'هل تريد حذف هذا الفرع؟ جميع الموظفين المعينين هنا سيفقدون فرعهم.' : 'Are you sure you want to delete this branch? Associated staff assignments will reset.',
+      onConfirm: () => {
+        const updated = branches.filter(b => b.id !== id);
+        setBranches(updated);
+        localStorage.setItem('emc_branches', JSON.stringify(updated));
+        
+        // Reset staff assignments to that branch
+        const updatedStaff = receptionists.map(r => r.branch_id === id ? { ...r, branch_id: '' } : r);
+        setReceptionists(updatedStaff);
+        localStorage.setItem('emc_receptionists', JSON.stringify(updatedStaff));
+      }
+    });
   };
 
   // Receptionist Staff Handlers
@@ -599,14 +636,20 @@ export default function OwnerDashboard() {
   };
 
   const handleDeleteStaff = (id: string) => {
-    if (!confirm(isAr ? 'هل تريد حذف هذا الموظف؟' : 'Delete this staff member?')) return;
-    const updated = receptionists.filter(r => r.id !== id);
-    setReceptionists(updated);
-    localStorage.setItem('emc_receptionists', JSON.stringify(updated));
-    if (editingStaff && editingStaff.id === id) {
-      setEditingStaff(null);
-      setStaffForm({ name: '', email: '', phone: '', password: '', branch_id: '', is_active: true });
-    }
+    setConfirmModal({
+      isOpen: true,
+      title: isAr ? 'حذف الموظف' : 'Delete Staff',
+      message: isAr ? 'هل تريد حذف هذا الموظف؟ لا يمكن التراجع عن هذا الإجراء.' : 'Are you sure you want to delete this staff member? This action cannot be undone.',
+      onConfirm: () => {
+        const updated = receptionists.filter(r => r.id !== id);
+        setReceptionists(updated);
+        localStorage.setItem('emc_receptionists', JSON.stringify(updated));
+        if (editingStaff && editingStaff.id === id) {
+          setEditingStaff(null);
+          setStaffForm({ name: '', email: '', phone: '', password: '', branch_id: '', is_active: true });
+        }
+      }
+    });
   };
 
   const handleTransferStaff = (staffId: string, targetBranchId: string) => {
@@ -695,14 +738,24 @@ export default function OwnerDashboard() {
     }
   };
 
-  const handleRestoreBackup = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleRestoreBackup = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!confirm(isAr ? 'تحذير: استعادة النسخة الاحتياطية ستقوم بدمج/تحديث كافة البيانات الحالية. هل أنت متأكد؟' : 'Warning: Restoring will merge/overwrite existing data. Continue?')) {
-      e.target.value = '';
-      return;
-    }
+    // Clear input value so same file can be selected again
+    e.target.value = '';
+
+    setConfirmModal({
+      isOpen: true,
+      title: isAr ? 'تحذير استعادة البيانات' : 'Restore Backup Warning',
+      message: isAr ? 'تحذير: استعادة النسخة الاحتياطية ستقوم بدمج/تحديث كافة البيانات الحالية. هل أنت متأكد؟' : 'Warning: Restoring will merge/overwrite existing data. Continue?',
+      onConfirm: () => {
+        executeRestoreBackup(file);
+      }
+    });
+  };
+
+  const executeRestoreBackup = async (file: File) => {
 
     setBackupStatus(isAr ? 'جاري قراءة ملف النسخة الاحتياطية...' : 'Reading backup file...');
     setBackupError('');
@@ -758,8 +811,7 @@ export default function OwnerDashboard() {
     } catch (err: any) {
       console.error(err);
       setBackupError(err.message || (isAr ? 'فشل استيراد النسخة الاحتياطية. تأكد من صحة الملف.' : 'Failed to restore backup.'));
-    } finally {
-      e.target.value = '';
+      setBackupStatus('');
     }
   };
 
@@ -2042,6 +2094,42 @@ export default function OwnerDashboard() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Confirm Modal */}
+      {confirmModal.isOpen && (
+        <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md">
+          <div className="bg-white border border-gray-150 rounded-[32px] max-w-sm w-full p-6 text-center shadow-2xl relative animate-in fade-in duration-200" dir={isAr ? 'rtl' : 'ltr'}>
+            <div className="w-12 h-12 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center mx-auto mb-4">
+              <AlertCircle className="w-6 h-6" />
+            </div>
+            <h3 className="text-base font-extrabold text-[#1A1A2E] mb-2">
+              {confirmModal.title}
+            </h3>
+            <p className="text-gray-500 text-xs leading-relaxed mb-6">
+              {confirmModal.message}
+            </p>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+                className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-2xl text-xs transition-colors cursor-pointer"
+              >
+                {isAr ? 'تراجع' : 'Cancel'}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  confirmModal.onConfirm();
+                  setConfirmModal(prev => ({ ...prev, isOpen: false }));
+                }}
+                className="flex-1 py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-2xl text-xs transition-colors cursor-pointer shadow-md shadow-rose-500/15"
+              >
+                {isAr ? 'تأكيد' : 'Confirm'}
+              </button>
+            </div>
           </div>
         </div>
       )}

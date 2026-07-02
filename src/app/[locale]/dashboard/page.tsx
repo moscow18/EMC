@@ -48,6 +48,19 @@ export default function DashboardPage() {
 
   // Review states
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  
+  // Custom Confirmation Modal State
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => {}
+  });
   const [reviewTarget, setReviewTarget] = useState<{ type: 'doctor' | 'clinic'; doctor_id?: string; doctor_name?: string } | null>(null);
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewComment, setReviewComment] = useState('');
@@ -80,31 +93,40 @@ export default function DashboardPage() {
     loadDashboard();
   }, []);
 
-  const handleCancelAppointment = async (id: string) => {
-    if (!window.confirm(isAr ? 'هل أنت متأكد من رغبتك في إلغاء هذا الحجز؟' : 'Are you sure you want to cancel this appointment?')) return;
-    setActionLoading(id);
+  const handleCancelAppointment = (id: string) => {
+    setConfirmModal({
+      isOpen: true,
+      title: isAr ? 'تأكيد إلغاء الحجز' : 'Cancel Appointment',
+      message: isAr ? 'هل أنت متأكد من رغبتك في إلغاء هذا الحجز؟ لا يمكن التراجع عن هذا الإجراء.' : 'Are you sure you want to cancel this appointment? This action cannot be undone.',
+      onConfirm: async () => {
+        setActionLoading(id);
+        try {
+          const { error } = await supabase
+            .from('appointments')
+            .update({ status: 'cancelled' })
+            .eq('id', id);
 
-    try {
-      const { error } = await supabase
-        .from('appointments')
-        .update({ status: 'cancelled' })
-        .eq('id', id);
+          if (error) throw error;
 
-      if (error) throw error;
-
-      // Update state local
-      setAppointments(prev =>
-        prev.map(appt => appt.id === id ? { ...appt, status: 'cancelled' } : appt)
-      );
-    } catch (err: any) {
-      console.error(err);
-      showToast(
-        isAr ? 'فشل إلغاء الحجز، حاول مرة أخرى' : 'Failed to cancel, try again',
-        'error'
-      );
-    } finally {
-      setActionLoading(null);
-    }
+          // Update state local
+          setAppointments(prev =>
+            prev.map(appt => appt.id === id ? { ...appt, status: 'cancelled' } : appt)
+          );
+          showToast(
+            isAr ? 'تم إلغاء الحجز بنجاح' : 'Appointment cancelled successfully',
+            'success'
+          );
+        } catch (err: any) {
+          console.error(err);
+          showToast(
+            isAr ? 'فشل إلغاء الحجز، حاول مرة أخرى' : 'Failed to cancel, try again',
+            'error'
+          );
+        } finally {
+          setActionLoading(null);
+        }
+      }
+    });
   };
 
   const getDoctorName = (docId?: string) => {
@@ -457,6 +479,47 @@ export default function DashboardPage() {
                   </button>
                 </div>
               </form>
+            </motion.div>
+          </div>
+        )}
+
+        {/* Custom Confirm Modal */}
+        {confirmModal.isOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white border border-gray-100 rounded-[32px] max-w-sm w-full p-6 text-center shadow-2xl relative"
+            >
+              <div className="w-12 h-12 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center mx-auto mb-4">
+                <CalendarX className="w-6 h-6" />
+              </div>
+              <h3 className="text-base font-extrabold text-[#1A1A2E] mb-2">
+                {confirmModal.title}
+              </h3>
+              <p className="text-gray-500 text-xs leading-relaxed mb-6">
+                {confirmModal.message}
+              </p>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+                  className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-2xl text-xs transition-colors cursor-pointer"
+                >
+                  {isAr ? 'تراجع' : 'Cancel'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    confirmModal.onConfirm();
+                    setConfirmModal(prev => ({ ...prev, isOpen: false }));
+                  }}
+                  className="flex-1 py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-2xl text-xs transition-colors cursor-pointer shadow-md shadow-rose-500/15"
+                >
+                  {isAr ? 'تأكيد الإلغاء' : 'Confirm'}
+                </button>
+              </div>
             </motion.div>
           </div>
         )}
